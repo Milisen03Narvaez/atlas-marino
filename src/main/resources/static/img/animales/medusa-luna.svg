@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img">
+<defs><linearGradient id="fondo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f4f7"/><stop offset="1" stop-color="#a9d6e2"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#fondo)"/>
+<g fill="#fff" opacity=".35"><circle cx="48" cy="52" r="7"/><circle cx="70" cy="86" r="4"/><circle cx="350" cy="60" r="9"/><circle cx="330" cy="98" r="5"/><circle cx="372" cy="240" r="6"/></g>
+<g stroke="#e7a3c4" stroke-width="5" fill="none" stroke-linecap="round">
+<path d="M140,152 C125,185 155,205 140,245"/><path d="M170,150 C160,190 185,215 172,262"/><path d="M230,150 C240,190 218,215 230,262"/><path d="M260,152 C275,185 245,205 262,245"/></g>
+<path d="M190,150 C180,190 200,210 190,244" stroke="#cf7fa5" stroke-width="10" fill="none" stroke-linecap="round"/>
+<path d="M210,150 C220,190 200,215 212,252" stroke="#cf7fa5" stroke-width="10" fill="none" stroke-linecap="round"/>
+<path d="M110,150 C110,40 290,40 290,150 C270,138 250,158 230,146 C210,158 190,138 170,150 C150,140 130,158 110,150 Z" fill="#e7a3c4" opacity=".92"/>
+<path d="M140,100 C150,70 190,58 220,62" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" opacity=".6"/>
+<g fill="none" stroke="#fff" stroke-width="3" opacity=".7"><circle cx="175" cy="112" r="9"/><circle cx="200" cy="106" r="9"/><circle cx="225" cy="112" r="9"/><circle cx="200" cy="128" r="9"/></g>
+</svg>

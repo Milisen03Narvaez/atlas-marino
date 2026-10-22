@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img">
+<defs><linearGradient id="fondo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f4f7"/><stop offset="1" stop-color="#a9d6e2"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#fondo)"/>
+<g fill="#fff" opacity=".35"><circle cx="48" cy="52" r="7"/><circle cx="70" cy="86" r="4"/><circle cx="350" cy="60" r="9"/><circle cx="330" cy="98" r="5"/><circle cx="372" cy="240" r="6"/></g>
+<defs><clipPath id="cuerpo"><ellipse cx="195" cy="150" rx="120" ry="70"/></clipPath></defs>
+<path d="M312,150 L372,100 L372,200 Z" fill="#f28c28"/>
+<path d="M150,90 C180,48 240,48 272,92 Z" fill="#f28c28"/>
+<ellipse cx="195" cy="150" rx="120" ry="70" fill="#f28c28"/>
+<g clip-path="url(#cuerpo)" fill="#fff" stroke="#0d2230" stroke-width="3"><rect x="120" y="70" width="24" height="160"/><rect x="200" y="70" width="26" height="160"/><rect x="290" y="70" width="14" height="160"/></g>
+<circle cx="92" cy="136" r="5" fill="#0d2230"/>
+</svg>

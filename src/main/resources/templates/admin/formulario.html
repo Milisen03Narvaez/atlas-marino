@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<!--
+  VISTA: formulario para crear o editar un animal (misma plantilla para las dos cosas).
+
+  Conexión con el controlador:
+    - GET /admin/nuevo o /admin/editar/{id} -> AdminController pone un objeto "animal" en el Model.
+    - th:object="${animal}" enlaza el formulario con ese objeto; th:field="*{nombre}" enlaza cada input
+      con animal.getNombre()/setNombre() (genera id, name y value automáticamente).
+    - Al enviar: POST /admin/guardar -> AdminController.guardar(). Si hay errores de validación (@NotBlank...),
+      vuelve a esta vista y #fields.hasErrors / th:errors muestran los mensajes junto a cada campo.
+    - enctype="multipart/form-data" es obligatorio para poder enviar el archivo de imagen.
+-->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Animal · Atlas Marino</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="admin">
+<header class="admin-barra">
+    <strong>Atlas Marino · Admin</strong>
+    <nav>
+        <a th:href="@{/admin}">← Volver al panel</a>
+        <a th:href="@{/admin/logout}">Cerrar sesión</a>
+    </nav>
+</header>
+
+<main class="admin-contenido estrecho">
+    <!-- Si el animal ya tiene id es edición; si no, es uno nuevo. -->
+    <h1 th:text="${animal.id != null} ? 'Editar animal' : 'Nuevo animal'">Animal</h1>
+
+    <form th:action="@{/admin/guardar}" th:object="${animal}" method="post" enctype="multipart/form-data"
+          class="formulario">
+
+        <!-- Campo oculto con el id: solo existe al editar. Así save() hace UPDATE en vez de INSERT. -->
+        <input type="hidden" th:if="*{id != null}" th:field="*{id}">
+
+        <label>Nombre *
+            <input type="text" th:field="*{nombre}" maxlength="100">
+            <small class="error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
+        </label>
+
+        <label>Nombre científico
+            <input type="text" th:field="*{nombreCientifico}" maxlength="150">
+            <small class="error" th:if="${#fields.hasErrors('nombreCientifico')}" th:errors="*{nombreCientifico}"></small>
+        </label>
+
+        <label>Descripción *
+            <textarea th:field="*{descripcion}" rows="5"></textarea>
+            <small class="error" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></small>
+        </label>
+
+        <div class="fila-2">
+            <label>Hábitat
+                <input type="text" th:field="*{habitat}" maxlength="200">
+            </label>
+            <label>Alimentación
+                <input type="text" th:field="*{dieta}" maxlength="200">
+            </label>
+        </div>
+
+        <label>Tamaño
+            <input type="text" th:field="*{tamano}" maxlength="100">
+        </label>
+
+        <fieldset class="imagen-bloque">
+            <legend>Imagen</legend>
+            <!-- Vista previa de la imagen actual (solo al editar) -->
+            <img class="miniatura grande" th:if="*{imagenUrl != null}" th:src="*{imagenUrl}" alt="Imagen actual">
+            <label>Subir archivo (JPG, PNG, WEBP o GIF, máx. 5 MB)
+                <input type="file" name="archivoImagen" accept="image/png,image/jpeg,image/webp,image/gif">
+            </label>
+            <label>…o pegar una URL / ruta
+                <input type="text" th:field="*{imagenUrl}" placeholder="https://… o /img/animales/archivo.svg">
+            </label>
+            <!-- Si se sube archivo, tiene prioridad sobre la URL (ver AdminController.guardar). -->
+            <small class="error" th:if="${errorImagen}" th:text="${errorImagen}"></small>
+        </fieldset>
+
+        <div class="barra-botones">
+            <button type="submit" class="btn btn-primario">Guardar</button>
+            <a class="btn btn-suave" th:href="@{/admin}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

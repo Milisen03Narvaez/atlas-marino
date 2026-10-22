@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--
+  VISTA PRINCIPAL (la "V" de MVC). Plantilla Thymeleaf: el navegador NUNCA ve los atributos th:*,
+  el servidor los procesa y envía HTML normal.
+
+  De dónde salen los datos ${...}: de HomeController.inicio(), que los puso en el Model:
+     ${animales}        -> los primeros 9 animales
+     ${totalPaginas}    -> cuántas páginas hay (lo lee buscador.js)
+     ${totalElementos}  -> total de animales
+
+  Esta página solo pinta la carga inicial. Después, buscador.js toma el control: cuando escribes,
+  pide /api/animales?q=... (AnimalApiController) y vuelve a pintar las tarjetas sin recargar.
+-->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Atlas Marino</title>
+    <!-- th:href="@{...}" -> Thymeleaf arma la URL correcta (incluye el context-path si existiera). -->
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body>
+
+<!-- ENCABEZADO + BARRA DE BÚSQUEDA. El <input id="campoBusqueda"> lo escucha buscador.js (evento "input"). -->
+<header class="hero">
+    <p class="eyebrow">Atlas Marino</p>
+    <h1>Descubre la vida del océano</h1>
+    <div class="buscador">
+        <input id="campoBusqueda" type="search" autocomplete="off"
+               placeholder="Busca una especie: ballena, pulpo, tortuga…"
+               aria-label="Buscar animal marino">
+    </div>
+</header>
+
+<main>
+    <!-- Texto de estado ("12 especies" / "3 resultados"). buscador.js lo actualiza. -->
+    <p id="estadoResultados" class="estado" th:text="${totalElementos} + ' especies'">12 especies</p>
+
+    <!--
+      REJILLA 3x3. Se define en estilos.css con grid-template-columns: repeat(3, 1fr).
+      Como el servicio limita a 9 resultados, siempre caben en 3 columnas x 3 filas.
+      th:attr="data-total-paginas=..." -> guarda el dato en el HTML para que JavaScript lo lea (dataset.totalPaginas).
+    -->
+    <section id="rejilla" class="rejilla" th:attr="data-total-paginas=${totalPaginas}">
+        <!--
+          th:each repite esta <article> una vez por cada animal de ${animales} (la lista del controlador).
+          data-id guarda el id del animal: al hacer clic, buscador.js lo usa para pedir /api/animales/{id}.
+        -->
+        <article class="tarjeta" th:each="animal : ${animales}" th:attr="data-id=${animal.id}"
+                 tabindex="0" role="button">
+            <img th:src="${animal.imagenUrl}" th:alt="${animal.nombre}" loading="lazy">
+            <div class="tarjeta-texto">
+                <h2 th:text="${animal.nombre}">Nombre</h2>
+                <p class="cientifico" th:text="${animal.nombreCientifico}">Nombre científico</p>
+            </div>
+        </article>
+    </section>
+
+    <!-- PAGINADOR: solo se muestra si hay más de 9 resultados. Lo controla buscador.js. -->
+    <nav id="paginacion" class="paginacion" aria-label="Paginación" hidden>
+        <button id="btnAnterior" type="button">← Anterior</button>
+        <span id="indicadorPagina"></span>
+        <button id="btnSiguiente" type="button">Siguiente →</button>
+    </nav>
+</main>
+
+<footer class="pie">
+    <span>Atlas Marino · Spring Boot + Thymeleaf + PostgreSQL</span>
+    <a th:href="@{/admin}">Administración</a>
+</footer>
+
+<!--
+  POPUP (modal). Empieza oculto (atributo hidden). buscador.js lo rellena con los datos que devuelve
+  /api/animales/{id} y lo muestra. Se cierra con el botón "Regresar", con la tecla Esc o al pulsar el fondo oscuro.
+-->
+<div id="modal" class="modal" hidden>
+    <div class="modal-fondo" id="modalFondo"></div>
+    <div class="modal-caja" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+        <button id="btnRegresar" class="btn-regresar" type="button">← Regresar</button>
+        <img id="modalImagen" class="modal-imagen" src="" alt="">
+        <div class="modal-contenido">
+            <h2 id="modalTitulo"></h2>
+            <p id="modalCientifico" class="cientifico"></p>
+            <p id="modalDescripcion" class="modal-descripcion"></p>
+            <dl class="datos">
+                <div><dt>Hábitat</dt><dd id="modalHabitat"></dd></div>
+                <div><dt>Alimentación</dt><dd id="modalDieta"></dd></div>
+                <div><dt>Tamaño</dt><dd id="modalTamano"></dd></div>
+            </dl>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/buscador.js}"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img">
+<defs><linearGradient id="fondo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f4f7"/><stop offset="1" stop-color="#a9d6e2"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#fondo)"/>
+<g fill="#fff" opacity=".35"><circle cx="48" cy="52" r="7"/><circle cx="70" cy="86" r="4"/><circle cx="350" cy="60" r="9"/><circle cx="330" cy="98" r="5"/><circle cx="372" cy="240" r="6"/></g>
+<path d="M110,150 L62,120 L62,180 Z" fill="#d9b254"/>
+<line x1="214.6" y1="67.3" x2="217.7" y2="49.5" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="247.0" y1="80.4" x2="257.0" y2="65.4" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="271.2" y1="105.5" x2="286.5" y2="95.9" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="283.2" y1="138.3" x2="301.0" y2="135.8" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="280.7" y1="173.2" x2="298.0" y2="178.1" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="264.3" y1="204.0" x2="278.1" y2="215.6" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="236.8" y1="225.5" x2="244.7" y2="241.7" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="202.9" y1="233.9" x2="203.6" y2="251.9" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="168.5" y1="227.9" x2="161.8" y2="244.6" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="139.6" y1="208.4" x2="126.6" y2="220.9" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="121.1" y1="178.7" x2="104.2" y2="184.9" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="116.2" y1="144.1" x2="98.2" y2="142.9" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="125.8" y1="110.6" x2="109.9" y2="102.1" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="148.3" y1="83.8" x2="137.2" y2="69.6" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/><line x1="179.7" y1="68.5" x2="175.3" y2="51.0" stroke="#c9a24a" stroke-width="3" stroke-linecap="round"/>
+<circle cx="200" cy="150" r="86" fill="#e9c46a"/>
+<path d="M130,180 C170,214 240,214 276,176 C240,196 170,196 130,180 Z" fill="#fbf1d2"/>
+<path d="M200,76 C220,60 244,64 250,82 Z" fill="#d9b254"/>
+<ellipse cx="228" cy="196" rx="20" ry="9" fill="#d9b254"/>
+<circle cx="262" cy="128" r="10" fill="#fff"/><circle cx="264" cy="128" r="5.5" fill="#0d2230"/>
+<path d="M276,166 C284,170 290,166 292,160" stroke="#0d2230" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>

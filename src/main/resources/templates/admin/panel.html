@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<!--
+  VISTA: panel de administración (tabla de animales).
+  Datos: AdminController.panel() pone ${animales} en el Model (lista completa desde AnimalService.listarTodos()).
+  Mensajes: ${mensaje} y ${error} llegan como "flash attributes" desde guardar(), eliminar() y editar()
+  (RedirectAttributes) y solo duran una carga de página.
+-->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Panel · Atlas Marino</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="admin">
+<header class="admin-barra">
+    <strong>Atlas Marino · Admin</strong>
+    <nav>
+        <a th:href="@{/}" target="_blank">Ver sitio</a>
+        <a th:href="@{/admin/logout}">Cerrar sesión</a>
+    </nav>
+</header>
+
+<main class="admin-contenido">
+    <div class="admin-titulo">
+        <h1>Animales</h1>
+        <!-- Enlace a AdminController.nuevo() -->
+        <a class="btn btn-primario" th:href="@{/admin/nuevo}">+ Nuevo animal</a>
+    </div>
+
+    <p class="alerta alerta-ok" th:if="${mensaje}" th:text="${mensaje}">Mensaje</p>
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <div class="tabla-envoltura">
+        <table class="tabla">
+            <thead>
+            <tr><th>Imagen</th><th>Nombre</th><th>Nombre científico</th><th class="acciones">Acciones</th></tr>
+            </thead>
+            <tbody>
+            <!-- Una fila por animal -->
+            <tr th:each="animal : ${animales}">
+                <td><img class="miniatura" th:src="${animal.imagenUrl}" th:alt="${animal.nombre}"></td>
+                <td th:text="${animal.nombre}">Nombre</td>
+                <td class="cientifico" th:text="${animal.nombreCientifico}">Científico</td>
+                <td class="acciones">
+                    <!-- Editar -> GET /admin/editar/{id}  (AdminController.editar) -->
+                    <a class="btn btn-suave" th:href="@{/admin/editar/{id}(id=${animal.id})}">Editar</a>
+                    <!-- Eliminar -> POST /admin/eliminar/{id} (AdminController.eliminar). confirm() pide confirmación. -->
+                    <form th:action="@{/admin/eliminar/{id}(id=${animal.id})}" method="post" class="en-linea"
+                          onsubmit="return confirm('¿Eliminar este animal?');">
+                        <button type="submit" class="btn btn-peligro">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(animales)}"><td colspan="4" class="vacio">No hay animales registrados.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

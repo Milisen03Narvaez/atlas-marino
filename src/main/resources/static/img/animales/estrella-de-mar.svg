@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img">
+<defs><linearGradient id="fondo" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3f4f7"/><stop offset="1" stop-color="#a9d6e2"/></linearGradient></defs>
+<rect width="400" height="300" fill="url(#fondo)"/>
+<g fill="#fff" opacity=".35"><circle cx="48" cy="52" r="7"/><circle cx="70" cy="86" r="4"/><circle cx="350" cy="60" r="9"/><circle cx="330" cy="98" r="5"/><circle cx="372" cy="240" r="6"/></g>
+<polygon points="200.0,42.0 227.0,112.8 302.7,116.6 243.7,164.2 263.5,237.4 200.0,196.0 136.5,237.4 156.3,164.2 97.3,116.6 173.0,112.8" fill="#e76f51" stroke="#e76f51" stroke-width="14" stroke-linejoin="round"/>
+<circle cx="200.0" cy="110.0" r="4" fill="#f4a261"/><circle cx="200.0" cy="80.0" r="4" fill="#f4a261"/><circle cx="238.0" cy="137.6" r="4" fill="#f4a261"/><circle cx="266.6" cy="128.4" r="4" fill="#f4a261"/><circle cx="223.5" cy="182.4" r="4" fill="#f4a261"/><circle cx="241.1" cy="206.6" r="4" fill="#f4a261"/><circle cx="176.5" cy="182.4" r="4" fill="#f4a261"/><circle cx="158.9" cy="206.6" r="4" fill="#f4a261"/><circle cx="162.0" cy="137.6" r="4" fill="#f4a261"/><circle cx="133.4" cy="128.4" r="4" fill="#f4a261"/>
+</svg>

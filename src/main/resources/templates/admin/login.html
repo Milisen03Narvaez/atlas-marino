@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!--
+  VISTA: login del admin.
+  Flujo: GET /admin/login (AdminController.mostrarLogin) muestra esta página.
+  Al enviar el formulario se hace POST /admin/login (AdminController.procesarLogin) con los campos
+  "usuario" y "clave" (los nombres de los inputs deben coincidir con los @RequestParam del controlador).
+  Si falla, el controlador vuelve a esta vista con la variable ${error}.
+-->
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin · Atlas Marino</title>
+    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+</head>
+<body class="admin">
+<main class="login-caja">
+    <p class="eyebrow">Atlas Marino</p>
+    <h1>Administración</h1>
+
+    <!-- th:if: este párrafo solo existe si el controlador puso "error" en el Model. -->
+    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+
+    <form th:action="@{/admin/login}" method="post" class="formulario">
+        <label>Usuario
+            <input type="text" name="usuario" required autofocus autocomplete="username">
+        </label>
+        <label>Contraseña
+            <input type="password" name="clave" required autocomplete="current-password">
+        </label>
+        <button type="submit" class="btn btn-primario">Entrar</button>
+    </form>
+    <a class="enlace-suave" th:href="@{/}">← Volver al atlas</a>
+</main>
+</body>
+</html>
