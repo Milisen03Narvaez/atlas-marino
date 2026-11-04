@@ -1,88 +1,103 @@
 <!DOCTYPE html>
 <!--
   VISTA: formulario para crear o editar un animal (misma plantilla para las dos cosas).
-
-  Conexión con el controlador:
-    - GET /admin/nuevo o /admin/editar/{id} -> AdminController pone un objeto "animal" en el Model.
-    - th:object="${animal}" enlaza el formulario con ese objeto; th:field="*{nombre}" enlaza cada input
-      con animal.getNombre()/setNombre() (genera id, name y value automáticamente).
-    - Al enviar: POST /admin/guardar -> AdminController.guardar(). Si hay errores de validación (@NotBlank...),
-      vuelve a esta vista y #fields.hasErrors / th:errors muestran los mensajes junto a cada campo.
+    - GET /admin/nuevo o /admin/editar/{id} -> AnimalController pone un objeto "animal" en el Model.
+    - th:object enlaza el formulario con ese objeto; th:field="*{nombre}" enlaza cada input con el atributo.
+    - Al enviar: POST /admin/guardar -> AnimalController.guardar(). Si hay errores de validación,
+      vuelve a esta vista y th:errors muestra el mensaje junto a cada campo.
     - enctype="multipart/form-data" es obligatorio para poder enviar el archivo de imagen.
+  Estilos: Tailwind, sin archivo .css propio.
 -->
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Animal · Atlas Marino</title>
-    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 </head>
-<body class="admin">
-<header class="admin-barra">
-    <strong>Atlas Marino · Admin</strong>
-    <nav>
-        <a th:href="@{/admin}">← Volver al panel</a>
-        <a th:href="@{/admin/logout}">Cerrar sesión</a>
-    </nav>
+<body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+
+<header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-2xl items-center justify-between px-6 py-4 text-sm">
+        <strong class="font-serif text-base font-normal">Atlas Marino · Admin</strong>
+        <nav class="flex gap-5 text-slate-500">
+            <a th:href="@{/admin}" class="transition hover:text-cyan-700">← Volver al panel</a>
+            <a th:href="@{/admin/logout}" class="transition hover:text-cyan-700">Cerrar sesión</a>
+        </nav>
+    </div>
 </header>
 
-<main class="admin-contenido estrecho">
+<main class="mx-auto w-full max-w-2xl px-6 py-10">
     <!-- Si el animal ya tiene id es edición; si no, es uno nuevo. -->
-    <h1 th:text="${animal.id != null} ? 'Editar animal' : 'Nuevo animal'">Animal</h1>
+    <h1 class="mb-6 font-serif text-3xl font-normal"
+        th:text="${animal.id != null} ? 'Editar animal' : 'Nuevo animal'">Animal</h1>
 
     <form th:action="@{/admin/guardar}" th:object="${animal}" method="post" enctype="multipart/form-data"
-          class="formulario">
+          class="flex flex-col gap-5 rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
 
         <!-- Campo oculto con el id: solo existe al editar. Así save() hace UPDATE en vez de INSERT. -->
         <input type="hidden" th:if="*{id != null}" th:field="*{id}">
 
-        <label>Nombre *
-            <input type="text" th:field="*{nombre}" maxlength="100">
-            <small class="error" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
+        <label class="flex flex-col gap-1 text-sm text-slate-700">Nombre *
+            <input type="text" th:field="*{nombre}" maxlength="100"
+                   class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
+            <small class="text-red-600" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></small>
         </label>
 
-        <label>Nombre científico
-            <input type="text" th:field="*{nombreCientifico}" maxlength="150">
-            <small class="error" th:if="${#fields.hasErrors('nombreCientifico')}" th:errors="*{nombreCientifico}"></small>
+        <label class="flex flex-col gap-1 text-sm text-slate-700">Nombre científico
+            <input type="text" th:field="*{nombreCientifico}" maxlength="150"
+                   class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
+            <small class="text-red-600" th:if="${#fields.hasErrors('nombreCientifico')}" th:errors="*{nombreCientifico}"></small>
         </label>
 
-        <label>Descripción *
-            <textarea th:field="*{descripcion}" rows="5"></textarea>
-            <small class="error" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></small>
+        <label class="flex flex-col gap-1 text-sm text-slate-700">Descripción *
+            <textarea th:field="*{descripcion}" rows="5"
+                      class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15"></textarea>
+            <small class="text-red-600" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></small>
         </label>
 
-        <div class="fila-2">
-            <label>Hábitat
-                <input type="text" th:field="*{habitat}" maxlength="200">
+        <!-- 1 columna en celular, 2 desde 640 px -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <label class="flex flex-col gap-1 text-sm text-slate-700">Hábitat
+                <input type="text" th:field="*{habitat}" maxlength="200"
+                       class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
             </label>
-            <label>Alimentación
-                <input type="text" th:field="*{dieta}" maxlength="200">
+            <label class="flex flex-col gap-1 text-sm text-slate-700">Alimentación
+                <input type="text" th:field="*{dieta}" maxlength="200"
+                       class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
             </label>
         </div>
 
-        <label>Tamaño
-            <input type="text" th:field="*{tamano}" maxlength="100">
+        <label class="flex flex-col gap-1 text-sm text-slate-700">Tamaño
+            <input type="text" th:field="*{tamano}" maxlength="100"
+                   class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
         </label>
 
-        <fieldset class="imagen-bloque">
-            <legend>Imagen</legend>
+        <fieldset class="flex flex-col gap-4 rounded-2xl border border-slate-200 p-4">
+            <legend class="px-2 text-sm text-slate-700">Imagen</legend>
             <!-- Vista previa de la imagen actual (solo al editar) -->
-            <img class="miniatura grande" th:if="*{imagenUrl != null}" th:src="*{imagenUrl}" alt="Imagen actual">
-            <label>Subir archivo (JPG, PNG, WEBP o GIF, máx. 5 MB)
-                <input type="file" name="archivoImagen" accept="image/png,image/jpeg,image/webp,image/gif">
+            <img th:if="*{imagenUrl != null}" th:src="*{imagenUrl}" alt="Imagen actual"
+                 class="aspect-video w-full max-w-xs rounded-xl bg-cyan-50 object-cover">
+            <label class="flex flex-col gap-1 text-sm text-slate-700">Subir archivo (JPG, PNG, WEBP o GIF, máx. 5 MB)
+                <input type="file" name="archivoImagen" accept="image/png,image/jpeg,image/webp,image/gif"
+                       class="text-sm file:mr-3 file:rounded-full file:border-0 file:bg-cyan-50 file:px-4 file:py-2 file:text-cyan-700 hover:file:bg-cyan-100">
             </label>
-            <label>…o pegar una URL / ruta
-                <input type="text" th:field="*{imagenUrl}" placeholder="https://… o /img/animales/archivo.svg">
+            <label class="flex flex-col gap-1 text-sm text-slate-700">…o pegar una URL / ruta
+                <input type="text" th:field="*{imagenUrl}" placeholder="https://… o /img/animales/archivo.svg"
+                       class="rounded-xl border border-slate-200 px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
             </label>
-            <!-- Si se sube archivo, tiene prioridad sobre la URL (ver AdminController.guardar). -->
-            <small class="error" th:if="${errorImagen}" th:text="${errorImagen}"></small>
+            <!-- Si se sube archivo, tiene prioridad sobre la URL (ver AnimalController.guardar). -->
+            <small class="text-red-600" th:if="${errorImagen}" th:text="${errorImagen}"></small>
         </fieldset>
 
-        <div class="barra-botones">
-            <button type="submit" class="btn btn-primario">Guardar</button>
-            <a class="btn btn-suave" th:href="@{/admin}">Cancelar</a>
+        <div class="flex flex-wrap gap-3">
+            <button type="submit"
+                    class="rounded-full bg-cyan-700 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-cyan-800">Guardar</button>
+            <a th:href="@{/admin}"
+               class="rounded-full border border-slate-200 px-6 py-2.5 text-sm transition hover:border-cyan-700 hover:text-cyan-700">Cancelar</a>
         </div>
     </form>
 </main>
+
 </body>
 </html>
