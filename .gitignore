@@ -2,3 +2,5 @@ target/
 .idea/
 *.iml
 uploads/
+node_modules/
+.env
