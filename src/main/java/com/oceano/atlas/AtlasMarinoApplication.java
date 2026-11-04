@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *      buscando clases con @Controller, @RestController, @Service, @Repository, @Component y @Configuration,
  *      crea UNA instancia de cada una y las conecta entre sí (inyección de dependencias por constructor).
  *
- * Por eso todos los paquetes (model, repository, service, controller, config) cuelgan de com.oceano.atlas:
+ * Por eso todos los paquetes (model, repository, service, controller) cuelgan de com.oceano.atlas:
  * si estuvieran fuera, Spring no los encontraría.
  */
 @SpringBootApplication

@@ -64,7 +64,7 @@ public class Animal {
     /**
      * Ruta o URL de la imagen. La base de datos NO guarda el archivo, solo su ubicación:
      *   "/img/animales/xxx.svg"  -> imagen incluida en el proyecto (carpeta static)
-     *   "/uploads/uuid.jpg"      -> imagen subida desde el admin (carpeta uploads, ver WebConfig)
+     *   "/uploads/uuid.jpg"      -> imagen subida desde el admin (carpeta uploads, ver AnimalController.imagenSubida)
      *   "https://..."            -> imagen externa
      * El navegador la usa directamente en <img src="...">.
      */
