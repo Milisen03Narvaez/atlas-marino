@@ -1,96 +1,136 @@
 <!DOCTYPE html>
 <!--
-  VISTA PRINCIPAL (la "V" de MVC). Plantilla Thymeleaf: el navegador NUNCA ve los atributos th:*,
+  VISTA PRINCIPAL (la "V" de MVC). Plantilla Thymeleaf: el navegador nunca ve los atributos th:*,
   el servidor los procesa y envía HTML normal.
 
-  De dónde salen los datos ${...}: de HomeController.inicio(), que los puso en el Model:
-     ${animales}        -> los primeros 9 animales
-     ${totalPaginas}    -> cuántas páginas hay (lo lee buscador.js)
-     ${totalElementos}  -> total de animales
+  Datos que llegan desde AnimalController.inicio() por el Model:
+     ${animales}         -> hasta 9 animales de la página actual
+     ${q}                -> texto buscado (se vuelve a escribir en el buscador)
+     ${paginaActual}     -> página que se está viendo (empieza en 0)
+     ${totalPaginas}     -> cuántas páginas hay
+     ${totalElementos}   -> cuántos animales coinciden
 
-  Esta página solo pinta la carga inicial. Después, buscador.js toma el control: cuando escribes,
-  pide /api/animales?q=... (AnimalApiController) y vuelve a pintar las tarjetas sin recargar.
+  Estilos: clases de Tailwind CSS cargadas con la librería (script de abajo). No hay archivo .css propio.
+
+  Cómo funciona SIN JavaScript propio:
+     - Buscador: es un <form method="get">. Al escribir, un oninput de una línea lo envía y el servidor responde.
+     - Paginador: son enlaces normales  /?q=...&pagina=N.
+     - Popup: cada animal tiene su ventana con id="animal-ID". La tarjeta enlaza a "#animal-ID" y
+       Tailwind muestra la ventana con la variante target:flex (CSS :target). "Regresar" enlaza a "#resultados".
 -->
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Atlas Marino</title>
-    <!-- th:href="@{...}" -> Thymeleaf arma la URL correcta (incluye el context-path si existiera). -->
-    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <!-- Librería Tailwind (versión fija). Necesita internet para cargar. -->
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 </head>
-<body>
+<body class="flex min-h-screen flex-col bg-slate-50 font-sans text-slate-900 antialiased">
 
-<!-- ENCABEZADO + BARRA DE BÚSQUEDA. El <input id="campoBusqueda"> lo escucha buscador.js (evento "input"). -->
-<header class="hero">
-    <p class="eyebrow">Atlas Marino</p>
-    <h1>Descubre la vida del océano</h1>
-    <div class="buscador">
-        <input id="campoBusqueda" type="search" autocomplete="off"
+<!-- ENCABEZADO + BUSCADOR -->
+<header class="px-6 pb-9 pt-12 text-center sm:pt-[72px]">
+    <p class="text-xs uppercase tracking-[0.28em] text-cyan-700">Atlas Marino</p>
+    <h1 class="mb-7 mt-3 font-serif text-4xl font-normal leading-tight sm:text-5xl">Descubre la vida del océano</h1>
+
+    <!-- name="q" es el parámetro que lee AnimalController (@RequestParam q). -->
+    <form th:action="@{/}" method="get" class="mx-auto w-full max-w-xl">
+        <input name="q" type="search" th:value="${q}" th:autofocus="${q != ''}" autocomplete="off"
                placeholder="Busca una especie: ballena, pulpo, tortuga…"
-               aria-label="Buscar animal marino">
-    </div>
+               aria-label="Buscar animal marino"
+               oninput="clearTimeout(window.t);window.t=setTimeout(()=>this.form.submit(),400)"
+               onfocus="this.setSelectionRange(this.value.length,this.value.length)"
+               class="w-full rounded-full border border-slate-200 bg-white px-6 py-4 shadow-md outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
+    </form>
 </header>
 
-<main>
-    <!-- Texto de estado ("12 especies" / "3 resultados"). buscador.js lo actualiza. -->
-    <p id="estadoResultados" class="estado" th:text="${totalElementos} + ' especies'">12 especies</p>
+<main class="mx-auto w-full max-w-5xl flex-1 px-6 pb-12">
 
-    <!--
-      REJILLA 3x3. Se define en estilos.css con grid-template-columns: repeat(3, 1fr).
-      Como el servicio limita a 9 resultados, siempre caben en 3 columnas x 3 filas.
-      th:attr="data-total-paginas=..." -> guarda el dato en el HTML para que JavaScript lo lea (dataset.totalPaginas).
-    -->
-    <section id="rejilla" class="rejilla" th:attr="data-total-paginas=${totalPaginas}">
-        <!--
-          th:each repite esta <article> una vez por cada animal de ${animales} (la lista del controlador).
-          data-id guarda el id del animal: al hacer clic, buscador.js lo usa para pedir /api/animales/{id}.
-        -->
-        <article class="tarjeta" th:each="animal : ${animales}" th:attr="data-id=${animal.id}"
-                 tabindex="0" role="button">
-            <img th:src="${animal.imagenUrl}" th:alt="${animal.nombre}" loading="lazy">
-            <div class="tarjeta-texto">
-                <h2 th:text="${animal.nombre}">Nombre</h2>
-                <p class="cientifico" th:text="${animal.nombreCientifico}">Nombre científico</p>
+    <!-- Texto de estado: "12 especies" o "3 resultados". -->
+    <p class="mb-5 text-center text-sm text-slate-500"
+       th:text="${q.isEmpty() ? totalElementos + ' especies' : totalElementos + (totalElementos == 1 ? ' resultado' : ' resultados')}">12 especies</p>
+
+    <!-- REJILLA: 1 columna en celular, 3 columnas desde 768 px. Con 9 tarjetas por página => 3 filas. -->
+    <section id="resultados" class="grid scroll-mt-6 grid-cols-1 gap-6 md:grid-cols-3">
+
+        <!-- th:each repite esta tarjeta por cada animal de ${animales}. Es un enlace a su popup (#animal-ID). -->
+        <a th:each="animal : ${animales}" th:href="'#animal-' + ${animal.id}"
+           class="overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:border-cyan-700 focus-visible:outline-none">
+            <img th:src="${animal.imagenUrl}" th:alt="${animal.nombre}" loading="lazy"
+                 class="aspect-[4/3] w-full bg-cyan-50 object-cover">
+            <div class="px-[18px] pb-5 pt-4">
+                <h2 class="font-serif text-lg" th:text="${animal.nombre}">Nombre</h2>
+                <p class="text-sm italic text-slate-500" th:text="${animal.nombreCientifico}">Nombre científico</p>
             </div>
-        </article>
+        </a>
+
+        <!-- Solo aparece si la búsqueda no encontró nada. -->
+        <p th:if="${#lists.isEmpty(animales)}" class="col-span-full py-14 text-center text-slate-500">
+            No encontramos ningún animal con ese nombre.
+        </p>
     </section>
 
-    <!-- PAGINADOR: solo se muestra si hay más de 9 resultados. Lo controla buscador.js. -->
-    <nav id="paginacion" class="paginacion" aria-label="Paginación" hidden>
-        <button id="btnAnterior" type="button">← Anterior</button>
-        <span id="indicadorPagina"></span>
-        <button id="btnSiguiente" type="button">Siguiente →</button>
+    <!-- PAGINADOR: solo si hay más de una página. Son enlaces normales que conservan el texto buscado. -->
+    <nav th:if="${totalPaginas > 1}" aria-label="Paginación"
+         class="mt-8 flex items-center justify-center gap-5 text-sm text-slate-500">
+        <a th:if="${paginaActual > 0}" th:href="@{/(q=${q},pagina=${paginaActual - 1})}"
+           class="rounded-full border border-slate-200 bg-white px-[18px] py-2 text-slate-900 transition hover:border-cyan-700 hover:text-cyan-700">← Anterior</a>
+        <span th:unless="${paginaActual > 0}"
+              class="rounded-full border border-slate-200 bg-white px-[18px] py-2 opacity-40">← Anterior</span>
+
+        <span th:text="${'Página ' + (paginaActual + 1) + ' de ' + totalPaginas}">Página 1 de 2</span>
+
+        <a th:if="${paginaActual < totalPaginas - 1}" th:href="@{/(q=${q},pagina=${paginaActual + 1})}"
+           class="rounded-full border border-slate-200 bg-white px-[18px] py-2 text-slate-900 transition hover:border-cyan-700 hover:text-cyan-700">Siguiente →</a>
+        <span th:unless="${paginaActual < totalPaginas - 1}"
+              class="rounded-full border border-slate-200 bg-white px-[18px] py-2 opacity-40">Siguiente →</span>
     </nav>
 </main>
 
-<footer class="pie">
-    <span>Atlas Marino · Spring Boot + Thymeleaf + PostgreSQL</span>
-    <a th:href="@{/admin}">Administración</a>
+<footer class="flex flex-wrap justify-between gap-4 border-t border-slate-200 px-6 py-6 text-sm text-slate-500">
+    <span>Atlas Marino · Spring Boot + Thymeleaf + PostgreSQL + Tailwind</span>
+    <a th:href="@{/admin}" class="text-cyan-700 hover:text-cyan-900">Administración</a>
 </footer>
 
 <!--
-  POPUP (modal). Empieza oculto (atributo hidden). buscador.js lo rellena con los datos que devuelve
-  /api/animales/{id} y lo muestra. Se cierra con el botón "Regresar", con la tecla Esc o al pulsar el fondo oscuro.
+  POPUPS (uno por animal de la página). Están ocultos (hidden) y solo se muestran cuando la URL termina en
+  "#animal-ID" (variante target:flex). Se cierran con "← Regresar" o pulsando el fondo oscuro: ambos
+  apuntan a "#resultados", así que la URL deja de coincidir y la ventana se oculta sola.
 -->
-<div id="modal" class="modal" hidden>
-    <div class="modal-fondo" id="modalFondo"></div>
-    <div class="modal-caja" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
-        <button id="btnRegresar" class="btn-regresar" type="button">← Regresar</button>
-        <img id="modalImagen" class="modal-imagen" src="" alt="">
-        <div class="modal-contenido">
-            <h2 id="modalTitulo"></h2>
-            <p id="modalCientifico" class="cientifico"></p>
-            <p id="modalDescripcion" class="modal-descripcion"></p>
-            <dl class="datos">
-                <div><dt>Hábitat</dt><dd id="modalHabitat"></dd></div>
-                <div><dt>Alimentación</dt><dd id="modalDieta"></dd></div>
-                <div><dt>Tamaño</dt><dd id="modalTamano"></dd></div>
+<div th:each="animal : ${animales}" th:id="'animal-' + ${animal.id}"
+     role="dialog" aria-modal="true" th:attr="aria-label=${animal.nombre}"
+     class="fixed inset-0 z-50 hidden items-center justify-center p-6 target:flex">
+
+    <a href="#resultados" aria-label="Cerrar" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></a>
+
+    <div class="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl">
+        <a href="#resultados"
+           class="absolute left-4 top-4 rounded-full bg-white/90 px-[18px] py-2 text-sm shadow-md transition hover:bg-white hover:text-cyan-700">← Regresar</a>
+
+        <img th:src="${animal.imagenUrl}" th:alt="${animal.nombre}" class="aspect-video w-full bg-cyan-50 object-cover">
+
+        <div class="px-6 pb-8 pt-7 sm:px-8">
+            <h2 class="font-serif text-3xl leading-tight" th:text="${animal.nombre}">Nombre</h2>
+            <p class="italic text-slate-500" th:text="${animal.nombreCientifico}">Nombre científico</p>
+            <p class="mb-6 mt-4 text-slate-700" th:text="${animal.descripcion}">Descripción</p>
+
+            <dl class="grid grid-cols-1 gap-4 border-t border-slate-200 pt-5 sm:grid-cols-3">
+                <div>
+                    <dt class="text-[0.72rem] uppercase tracking-[0.14em] text-cyan-700">Hábitat</dt>
+                    <dd class="mt-1 text-sm" th:text="${#strings.isEmpty(animal.habitat) ? '—' : animal.habitat}">—</dd>
+                </div>
+                <div>
+                    <dt class="text-[0.72rem] uppercase tracking-[0.14em] text-cyan-700">Alimentación</dt>
+                    <dd class="mt-1 text-sm" th:text="${#strings.isEmpty(animal.dieta) ? '—' : animal.dieta}">—</dd>
+                </div>
+                <div>
+                    <dt class="text-[0.72rem] uppercase tracking-[0.14em] text-cyan-700">Tamaño</dt>
+                    <dd class="mt-1 text-sm" th:text="${#strings.isEmpty(animal.tamano) ? '—' : animal.tamano}">—</dd>
+                </div>
             </dl>
         </div>
     </div>
 </div>
 
-<script th:src="@{/js/buscador.js}"></script>
 </body>
 </html>

@@ -26,19 +26,19 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.Map;
+
 
 /**
- * CONTROLADOR ÚNICO. Reúne lo que antes hacían HomeController, AnimalApiController y AdminController:
+ * CONTROLADOR ÚNICO (la "C" de MVC). Todas las rutas de la aplicación están aquí:
  *
- *   PÁGINA   GET /                       -> templates/index.html
- *   API JSON GET /api/animales           -> buscador en vivo (lo llama buscador.js)
- *            GET /api/animales/{id}      -> datos del popup
- *   IMÁGENES GET /uploads/{nombre}       -> imágenes subidas por el admin
- *   ADMIN    /admin/**                   -> login, panel, crear, editar y eliminar (requiere sesión)
+ *   PÁGINA   GET /?q=texto&pagina=0   -> templates/index.html (buscador, rejilla 3x3, paginador y popup)
+ *   IMÁGENES GET /uploads/{nombre}    -> imágenes subidas por el admin
+ *   ADMIN    /admin/**                -> login, panel, crear, editar y eliminar (requiere sesión)
  *
  *   Navegador ──► AnimalController ──► AnimalService ──► AnimalRepository ──► PostgreSQL
+ *   Los datos vuelven por el Model hasta la plantilla Thymeleaf (ya no hay JSON ni JavaScript propio).
  */
+
 @Controller
 public class AnimalController {
 
@@ -61,38 +61,24 @@ public class AnimalController {
 
     // ================================================================== PÁGINA PRINCIPAL
 
-    /** Primera pantalla: los primeros 9 animales. Los datos llegan a index.html por el Model. */
+    /**
+     * Pantalla principal. Sirve para la carga inicial, para buscar y para cambiar de página:
+     *   GET /                   -> los primeros 9 animales
+     *   GET /?q=ball            -> los que coinciden con "ball"
+     *   GET /?q=ball&pagina=1   -> la segunda página de ese resultado
+     * Los datos llegan a index.html por el Model.
+     */
     @GetMapping("/")
-    public String inicio(Model model) {
-        Page<Animal> pagina = animalService.buscar("", 0);
-        model.addAttribute("animales", pagina.getContent());
-        model.addAttribute("totalPaginas", pagina.getTotalPages());      // lo lee buscador.js
-        model.addAttribute("totalElementos", pagina.getTotalElements()); // texto "12 especies"
-        return "index";
-    }
-
-    // ================================================================== API JSON (buscador.js)
-
-    /** GET /api/animales?q=texto&pagina=0 -> hasta 9 animales + datos del paginador (JSON). */
-    @GetMapping("/api/animales")
-    @ResponseBody
-    public Map<String, Object> buscar(@RequestParam(defaultValue = "") String q,
-                                      @RequestParam(defaultValue = "0") int pagina) {
+    public String inicio(@RequestParam(defaultValue = "") String q,
+                         @RequestParam(defaultValue = "0") int pagina,
+                         Model model) {
         Page<Animal> resultado = animalService.buscar(q, pagina);
-        return Map.of(
-                "animales", resultado.getContent(),
-                "paginaActual", resultado.getNumber(),
-                "totalPaginas", resultado.getTotalPages(),
-                "totalElementos", resultado.getTotalElements());
-    }
-
-    /** GET /api/animales/{id} -> un animal completo para el popup. 404 si no existe. */
-    @GetMapping("/api/animales/{id}")
-    @ResponseBody
-    public ResponseEntity<Animal> detalle(@PathVariable Long id) {
-        return animalService.obtenerPorId(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        model.addAttribute("animales", resultado.getContent());
+        model.addAttribute("q", q.trim());                                // texto que se queda escrito en el buscador
+        model.addAttribute("paginaActual", resultado.getNumber());
+        model.addAttribute("totalPaginas", resultado.getTotalPages());
+        model.addAttribute("totalElementos", resultado.getTotalElements());
+        return "index";
     }
 
     // ================================================================== IMÁGENES SUBIDAS
