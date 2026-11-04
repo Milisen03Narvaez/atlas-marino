@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
  *   deleteById(id)    -> DELETE ...
  *   count()           -> SELECT count(*)
  *
- * Quién la usa: SOLO AnimalService (y DataSeeder a través del servicio).
+ * Quién la usa: SOLO AnimalService.
  * Los controladores nunca hablan directo con el repositorio: siempre pasan por el servicio.
  */
 @Repository
