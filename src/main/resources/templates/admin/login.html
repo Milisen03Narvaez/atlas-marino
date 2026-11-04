@@ -1,36 +1,43 @@
 <!DOCTYPE html>
 <!--
   VISTA: login del admin.
-  Flujo: GET /admin/login (AdminController.mostrarLogin) muestra esta página.
-  Al enviar el formulario se hace POST /admin/login (AdminController.procesarLogin) con los campos
-  "usuario" y "clave" (los nombres de los inputs deben coincidir con los @RequestParam del controlador).
+  GET /admin/login muestra esta página. Al enviar se hace POST /admin/login con los campos
+  "usuario" y "clave" (los name deben coincidir con los @RequestParam de AnimalController).
   Si falla, el controlador vuelve a esta vista con la variable ${error}.
+  Estilos: Tailwind (librería cargada abajo), sin archivo .css propio.
 -->
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin · Atlas Marino</title>
-    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 </head>
-<body class="admin">
-<main class="login-caja">
-    <p class="eyebrow">Atlas Marino</p>
-    <h1>Administración</h1>
+<body class="flex min-h-screen items-center justify-center bg-slate-50 px-6 font-sans text-slate-900 antialiased">
 
-    <!-- th:if: este párrafo solo existe si el controlador puso "error" en el Model. -->
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+<main class="w-full max-w-sm rounded-3xl border border-slate-200 bg-white p-8 shadow-md">
+    <p class="text-xs uppercase tracking-[0.28em] text-cyan-700">Atlas Marino</p>
+    <h1 class="mb-6 mt-2 font-serif text-3xl font-normal">Administración</h1>
 
-    <form th:action="@{/admin/login}" method="post" class="formulario">
-        <label>Usuario
-            <input type="text" name="usuario" required autofocus autocomplete="username">
+    <!-- Solo aparece si el controlador puso "error" en el Model. -->
+    <p th:if="${error}" th:text="${error}"
+       class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">Error</p>
+
+    <form th:action="@{/admin/login}" method="post" class="flex flex-col gap-4">
+        <label class="flex flex-col gap-1 text-sm text-slate-700">Usuario
+            <input type="text" name="usuario" required autofocus autocomplete="username"
+                   class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
         </label>
-        <label>Contraseña
-            <input type="password" name="clave" required autocomplete="current-password">
+        <label class="flex flex-col gap-1 text-sm text-slate-700">Contraseña
+            <input type="password" name="clave" required autocomplete="current-password"
+                   class="rounded-xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-cyan-700 focus:ring-4 focus:ring-cyan-700/15">
         </label>
-        <button type="submit" class="btn btn-primario">Entrar</button>
+        <button type="submit"
+                class="rounded-full bg-cyan-700 px-6 py-3 text-sm font-medium text-white transition hover:bg-cyan-800">Entrar</button>
     </form>
-    <a class="enlace-suave" th:href="@{/}">← Volver al atlas</a>
+
+    <a th:href="@{/}" class="mt-6 inline-block text-sm text-slate-500 transition hover:text-cyan-700">← Volver al atlas</a>
 </main>
+
 </body>
 </html>

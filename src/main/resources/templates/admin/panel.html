@@ -1,61 +1,84 @@
 <!DOCTYPE html>
 <!--
   VISTA: panel de administración (tabla de animales).
-  Datos: AdminController.panel() pone ${animales} en el Model (lista completa desde AnimalService.listarTodos()).
-  Mensajes: ${mensaje} y ${error} llegan como "flash attributes" desde guardar(), eliminar() y editar()
-  (RedirectAttributes) y solo duran una carga de página.
+  Datos: AnimalController.panel() pone ${animales} en el Model (AnimalService.listarTodos()).
+  Mensajes: ${mensaje} y ${error} llegan como "flash attributes" (RedirectAttributes) y duran una sola carga.
+  Estilos: Tailwind, sin archivo .css propio.
 -->
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Panel · Atlas Marino</title>
-    <link rel="stylesheet" th:href="@{/css/estilos.css}">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 </head>
-<body class="admin">
-<header class="admin-barra">
-    <strong>Atlas Marino · Admin</strong>
-    <nav>
-        <a th:href="@{/}" target="_blank">Ver sitio</a>
-        <a th:href="@{/admin/logout}">Cerrar sesión</a>
-    </nav>
+<body class="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased">
+
+<!-- BARRA SUPERIOR -->
+<header class="border-b border-slate-200 bg-white">
+    <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4 text-sm">
+        <strong class="font-serif text-base font-normal">Atlas Marino · Admin</strong>
+        <nav class="flex gap-5 text-slate-500">
+            <a th:href="@{/}" target="_blank" class="transition hover:text-cyan-700">Ver sitio</a>
+            <a th:href="@{/admin/logout}" class="transition hover:text-cyan-700">Cerrar sesión</a>
+        </nav>
+    </div>
 </header>
 
-<main class="admin-contenido">
-    <div class="admin-titulo">
-        <h1>Animales</h1>
-        <!-- Enlace a AdminController.nuevo() -->
-        <a class="btn btn-primario" th:href="@{/admin/nuevo}">+ Nuevo animal</a>
+<main class="mx-auto w-full max-w-5xl px-6 py-10">
+    <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+        <h1 class="font-serif text-3xl font-normal">Animales</h1>
+        <!-- Lleva a AnimalController.nuevo() -->
+        <a th:href="@{/admin/nuevo}"
+           class="rounded-full bg-cyan-700 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-cyan-800">+ Nuevo animal</a>
     </div>
 
-    <p class="alerta alerta-ok" th:if="${mensaje}" th:text="${mensaje}">Mensaje</p>
-    <p class="alerta alerta-error" th:if="${error}" th:text="${error}">Error</p>
+    <p th:if="${mensaje}" th:text="${mensaje}"
+       class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">Mensaje</p>
+    <p th:if="${error}" th:text="${error}"
+       class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">Error</p>
 
-    <div class="tabla-envoltura">
-        <table class="tabla">
-            <thead>
-            <tr><th>Imagen</th><th>Nombre</th><th>Nombre científico</th><th class="acciones">Acciones</th></tr>
+    <!-- overflow-x-auto: en celular la tabla se desplaza hacia el lado en vez de romper la página. -->
+    <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+        <table class="w-full min-w-[560px] text-left text-sm">
+            <thead class="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+            <tr>
+                <th class="px-4 py-3 font-medium">Imagen</th>
+                <th class="px-4 py-3 font-medium">Nombre</th>
+                <th class="px-4 py-3 font-medium">Nombre científico</th>
+                <th class="px-4 py-3 text-right font-medium">Acciones</th>
+            </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-100">
             <!-- Una fila por animal -->
             <tr th:each="animal : ${animales}">
-                <td><img class="miniatura" th:src="${animal.imagenUrl}" th:alt="${animal.nombre}"></td>
-                <td th:text="${animal.nombre}">Nombre</td>
-                <td class="cientifico" th:text="${animal.nombreCientifico}">Científico</td>
-                <td class="acciones">
-                    <!-- Editar -> GET /admin/editar/{id}  (AdminController.editar) -->
-                    <a class="btn btn-suave" th:href="@{/admin/editar/{id}(id=${animal.id})}">Editar</a>
-                    <!-- Eliminar -> POST /admin/eliminar/{id} (AdminController.eliminar). confirm() pide confirmación. -->
-                    <form th:action="@{/admin/eliminar/{id}(id=${animal.id})}" method="post" class="en-linea"
-                          onsubmit="return confirm('¿Eliminar este animal?');">
-                        <button type="submit" class="btn btn-peligro">Eliminar</button>
-                    </form>
+                <td class="px-4 py-3">
+                    <img th:src="${animal.imagenUrl}" th:alt="${animal.nombre}"
+                         class="h-12 w-16 rounded-lg bg-cyan-50 object-cover">
+                </td>
+                <td class="px-4 py-3 font-medium" th:text="${animal.nombre}">Nombre</td>
+                <td class="px-4 py-3 italic text-slate-500" th:text="${animal.nombreCientifico}">Científico</td>
+                <td class="px-4 py-3">
+                    <div class="flex items-center justify-end gap-2">
+                        <!-- Editar -> GET /admin/editar/{id} -->
+                        <a th:href="@{/admin/editar/{id}(id=${animal.id})}"
+                           class="rounded-full border border-slate-200 px-4 py-1.5 transition hover:border-cyan-700 hover:text-cyan-700">Editar</a>
+                        <!-- Eliminar -> POST /admin/eliminar/{id}. confirm() pide confirmación. -->
+                        <form th:action="@{/admin/eliminar/{id}(id=${animal.id})}" method="post"
+                              onsubmit="return confirm('¿Eliminar este animal?');">
+                            <button type="submit"
+                                    class="rounded-full border border-red-200 px-4 py-1.5 text-red-700 transition hover:bg-red-50">Eliminar</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
-            <tr th:if="${#lists.isEmpty(animales)}"><td colspan="4" class="vacio">No hay animales registrados.</td></tr>
+            <tr th:if="${#lists.isEmpty(animales)}">
+                <td colspan="4" class="px-4 py-10 text-center text-slate-500">No hay animales registrados.</td>
+            </tr>
             </tbody>
         </table>
     </div>
 </main>
+
 </body>
 </html>
