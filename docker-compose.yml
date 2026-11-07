@@ -32,8 +32,6 @@ services:
       UPLOADS_DIR: /app/uploads
       ADMIN_USER: ${ADMIN_USER:-admin}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
-    ports:
-      - "8080:8080"
     volumes:
       - uploads:/app/uploads
 

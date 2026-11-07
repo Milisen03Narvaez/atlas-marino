@@ -76,7 +76,7 @@
         <fieldset class="flex flex-col gap-4 rounded-2xl border border-slate-200 p-4">
             <legend class="px-2 text-sm text-slate-700">Imagen</legend>
             <!-- Vista previa de la imagen actual (solo al editar) -->
-            <img th:if="*{imagenUrl != null}" th:src="*{imagenUrl}" alt="Imagen actual"
+            <img th:if="*{imagenUrl != null}" th:src="@{*{imagenUrl}}" alt="Imagen actual"
                  class="aspect-video w-full max-w-xs rounded-xl bg-cyan-50 object-cover">
             <label class="flex flex-col gap-1 text-sm text-slate-700">Subir archivo (JPG, PNG, WEBP o GIF, máx. 5 MB)
                 <input type="file" name="archivoImagen" accept="image/png,image/jpeg,image/webp,image/gif"
