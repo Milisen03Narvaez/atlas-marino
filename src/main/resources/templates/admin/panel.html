@@ -53,7 +53,7 @@
             <!-- Una fila por animal -->
             <tr th:each="animal : ${animales}">
                 <td class="px-4 py-3">
-                    <img th:src="${animal.imagenUrl}" th:alt="${animal.nombre}"
+                    <img th:src="@{${animal.imagenUrl}}" th:alt="${animal.nombre}"
                          class="h-12 w-16 rounded-lg bg-cyan-50 object-cover">
                 </td>
                 <td class="px-4 py-3 font-medium" th:text="${animal.nombre}">Nombre</td>

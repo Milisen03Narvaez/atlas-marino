@@ -56,7 +56,7 @@
         <!-- th:each repite esta tarjeta por cada animal de ${animales}. Es un enlace a su popup (#animal-ID). -->
         <a th:each="animal : ${animales}" th:href="'#animal-' + ${animal.id}"
            class="overflow-hidden rounded-2xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:shadow-lg focus-visible:-translate-y-1 focus-visible:border-cyan-700 focus-visible:outline-none">
-            <img th:src="${animal.imagenUrl}" th:alt="${animal.nombre}" loading="lazy"
+            <img th:src="@{${animal.imagenUrl}}" th:alt="${animal.nombre}" loading="lazy"
                  class="aspect-[4/3] w-full bg-cyan-50 object-cover">
             <div class="px-[18px] pb-5 pt-4">
                 <h2 class="font-serif text-lg" th:text="${animal.nombre}">Nombre</h2>
@@ -107,7 +107,7 @@
         <a href="#resultados"
            class="absolute left-4 top-4 rounded-full bg-white/90 px-[18px] py-2 text-sm shadow-md transition hover:bg-white hover:text-cyan-700">← Regresar</a>
 
-        <img th:src="${animal.imagenUrl}" th:alt="${animal.nombre}" class="aspect-video w-full bg-cyan-50 object-cover">
+        <img th:src="@{${animal.imagenUrl}}" th:alt="${animal.nombre}" class="aspect-video w-full bg-cyan-50 object-cover">
 
         <div class="px-6 pb-8 pt-7 sm:px-8">
             <h2 class="font-serif text-3xl leading-tight" th:text="${animal.nombre}">Nombre</h2>
